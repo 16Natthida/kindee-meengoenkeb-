@@ -1,0 +1,61 @@
+name: kindee_meengoenkeb
+description: "กินดี มีเงินเก็บ - แอปแบ่งเงินเดือนอัตโนมัติ บันทึกรายจ่าย และวางแผนเมนูอาหารตามงบประมาณ"
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Backend
+  supabase_flutter: ^2.5.6
+
+  # State Management
+  flutter_riverpod: ^2.5.1
+  riverpod_annotation: ^2.3.5
+
+  # Navigation
+  go_router: ^14.2.0
+
+  # Env
+  flutter_dotenv: ^5.1.0
+
+  # UUID
+  uuid: ^4.4.0
+
+  # UI
+  cupertino_icons: ^1.0.6
+  google_fonts: ^6.2.1
+  fl_chart: ^0.68.0
+  shimmer: ^3.0.0
+  flutter_svg: ^2.0.10+1
+
+  # Forms / Utils
+  intl: ^0.19.0
+  image_picker: ^1.1.2
+  google_mlkit_text_recognition: ^0.16.0
+  cached_network_image: ^3.3.1
+  connectivity_plus: ^6.0.3
+  logger: ^2.4.0
+  collection: ^1.18.0
+
+  # Local light cache (not localStorage-in-browser; native shared prefs)
+  shared_preferences: ^2.2.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  riverpod_generator: ^2.4.0
+  build_runner: ^2.4.11
+  mocktail: ^1.0.3
+
+flutter:
+  uses-material-design: true
+  assets:
+    - .env
+    - assets/images/
+    - assets/icons/

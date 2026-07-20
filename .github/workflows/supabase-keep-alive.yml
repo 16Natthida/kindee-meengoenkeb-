@@ -1,0 +1,40 @@
+name: Supabase Keep-Alive
+
+# ป้องกัน Supabase Free Tier พักโปรเจกต์อัตโนมัติหลังไม่มีการใช้งาน 7 วัน
+# โดยยิง Query เล็ก ๆ ไปที่ตาราง meal_templates (อ่านได้ทุกคนที่ login ตาม RLS)
+# ทุกวัน เพื่อรีเซ็ตตัวนับความไม่ใช้งานของ Supabase ให้ไม่ถึง 7 วันเสมอ
+
+on:
+  schedule:
+    # รันทุกวันเวลา 09:00 UTC (16:00 น. เวลาไทย)
+    - cron: '0 9 * * *'
+  workflow_dispatch: {} # กดรันเองได้จากแท็บ Actions
+
+jobs:
+  ping-supabase:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase REST API
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_ANON_KEY" ]; then
+            echo "::error::กรุณาตั้งค่า Repository Secrets ชื่อ SUPABASE_URL และ SUPABASE_ANON_KEY ก่อน"
+            exit 1
+          fi
+
+          http_status=$(curl -s -o /tmp/response.json -w "%{http_code}" \
+            "$SUPABASE_URL/rest/v1/meal_templates?select=id&limit=1" \
+            -H "apikey: $SUPABASE_ANON_KEY" \
+            -H "Authorization: Bearer $SUPABASE_ANON_KEY")
+
+          echo "HTTP status: $http_status"
+          cat /tmp/response.json
+
+          if [ "$http_status" -ge 400 ]; then
+            echo "::error::Ping ล้มเหลว (HTTP $http_status) กรุณาตรวจสอบ URL/Key หรือสถานะโปรเจกต์ Supabase"
+            exit 1
+          fi
+
+          echo "✅ Ping สำเร็จ — โปรเจกต์ Supabase จะไม่ถูกพักในสัปดาห์นี้"
